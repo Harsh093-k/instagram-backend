@@ -124,7 +124,7 @@ export const login = async (req, res) => {
         }
         return res.cookie('token', token, {
             httpOnly: true, secure: true,
-            sameSite: 'none', maxAge: 1 * 24 * 60 * 60 * 1000
+            sameSite: 'static', maxAge: 1 * 24 * 60 * 60 * 1000
         }).json({
             message: `Welcome back ${user.username}`,
             success: true,
