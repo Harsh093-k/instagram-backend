@@ -101,7 +101,7 @@ export const login = async (req, res) => {
             });
         };
 
-        const token =jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' });
+        const token =await jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' });
 
         const populatedPosts = await Promise.all(
             user.posts.map(async (postId) => {
@@ -125,7 +125,8 @@ export const login = async (req, res) => {
         return res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
             message: `Welcome back ${user.username}`,
             success: true,
-            user
+            user,
+            token
         });
 
     } catch (error) {
