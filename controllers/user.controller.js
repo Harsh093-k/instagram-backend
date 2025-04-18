@@ -33,7 +33,7 @@ export const register = async (req, res) => {
             password: hashedPassword,
         });
 
-   
+
         await sendConfirmationEmail(username, email);
 
         return res.status(201).json({
@@ -56,8 +56,8 @@ const sendConfirmationEmail = async (username, email) => {
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: "xs332000@gmail.com", 
-                pass: "ohej afzp plna vhlu",  
+                user: "xs332000@gmail.com",
+                pass: "ohej afzp plna vhlu",
             },
         });
 
@@ -122,7 +122,10 @@ export const login = async (req, res) => {
             following: user.following,
             posts: populatedPosts
         }
-        return res.cookie('token', token, { httpOnly: true, sameSite: 'static', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
+        return res.cookie('token', token, {
+            httpOnly: true, secure: true,
+            sameSite: 'none', maxAge: 1 * 24 * 60 * 60 * 1000
+        }).json({
             message: `Welcome back ${user.username}`,
             success: true,
             user,
@@ -147,22 +150,22 @@ export const myProfile = async (req, res) => {
     try {
         const userId = req.id;
 
-        
+
         let user = await User.findById(userId).select("-password");
 
         if (!user) {
             return res.status(404).json({ message: "User not found", success: false });
         }
 
-       
+
         let followingUsers = await User.find({ _id: { $in: user.following } })
             .select("_id username profilePicture");
 
 
         return res.status(200).json({
             success: true,
-      
-            following: followingUsers, 
+
+            following: followingUsers,
         });
     } catch (error) {
         console.log(error);
@@ -233,14 +236,14 @@ export const editProfile = async (req, res) => {
 
 export const getSuggestedUsers = async (req, res) => {
     try {
-        const currentUser = await User.findById(req.id); 
+        const currentUser = await User.findById(req.id);
         if (!currentUser) {
             return res.status(400).json({ message: "User not found" });
         }
 
-        
+
         const suggestedUsers = await User.find({
-            _id: { $nin: [...currentUser.following, req.id] }, 
+            _id: { $nin: [...currentUser.following, req.id] },
         }).select("-password");
 
         if (suggestedUsers.length === 0) {
@@ -309,8 +312,8 @@ export const sendOTP = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
-        const otpExpiry = Date.now() + 10 * 60 * 1000; 
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpiry = Date.now() + 10 * 60 * 1000;
 
         user.resetOTP = otp;
         user.otpExpiry = otpExpiry;
@@ -319,13 +322,13 @@ export const sendOTP = async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: "xs332000@gmail.com", 
-                pass: "ohej afzp plna vhlu", 
+                user: "xs332000@gmail.com",
+                pass: "ohej afzp plna vhlu",
             }
         });
 
         const mailOptions = {
-            from:"xs332000@gmail.com",
+            from: "xs332000@gmail.com",
             to: user.email,
             subject: 'Password Reset OTP',
             text: `Your OTP for password reset is: ${otp}`
@@ -343,7 +346,7 @@ export const sendOTP = async (req, res) => {
 
 
 export const forgotPassword = async (req, res) => {
-    const { email,otp, newPassword } = req.body;
+    const { email, otp, newPassword } = req.body;
 
     try {
         const user = await User.findOne({ email });
@@ -351,9 +354,9 @@ export const forgotPassword = async (req, res) => {
         if (!user || user.resetOTP !== otp || user.otpExpiry < Date.now()) {
             return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
         }
-       
+
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedPassword; 
+        user.password = hashedPassword;
         user.resetOTP = null;
         user.otpExpiry = null;
 
