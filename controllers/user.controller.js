@@ -64,11 +64,29 @@ const sendConfirmationEmail = async (username, email) => {
         const mailOptions = {
             from: 'xs332000@gmail.com',
             to: email,
-            subject: "Welcome to Our Platform!",
-            html: `<h1>Welcome, ${username}!</h1>
-                   <p>Thank you for registering. Your account has been created successfully.</p>
-                   <p>Enjoy our services!</p>`,
-        };
+            subject: "Welcome to Instapic – Your Social Space ✨",
+            html: `
+              <div style="font-family: Arial, sans-serif; background-color: #fafafa; padding: 30px;">
+                <div style="max-width: 600px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                  <h2 style="color: #262626; text-align: center;">👋 Welcome to <span style="color:#E1306C;">Instapic</span>, ${username}!</h2>
+                  <p style="color: #555; font-size: 16px; line-height: 1.5; text-align: center;">
+                    Thank you for joining our community! Your account has been created successfully.
+                  </p>
+                  <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;" />
+                  <p style="color: #555; font-size: 15px; text-align: center;">
+                    Start exploring, sharing moments, and connecting with others just like you.
+                  </p>
+                  <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://your-app-url.com" style="background-color: #E1306C; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold;">Go to your feed</a>
+                  </div>
+                  <p style="font-size: 12px; color: #999; text-align: center; margin-top: 30px;">
+                    This is an automated message. Please do not reply to this email.
+                  </p>
+                </div>
+              </div>
+            `,
+          };
+          
 
         await transporter.sendMail(mailOptions);
         console.log("Confirmation email sent to:", email);
@@ -330,9 +348,31 @@ export const sendOTP = async (req, res) => {
         const mailOptions = {
             from: "xs332000@gmail.com",
             to: user.email,
-            subject: 'Password Reset OTP',
-            text: `Your OTP for password reset is: ${otp}`
-        };
+            subject: "🔒 Password Reset OTP",
+            html: `
+              <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px;">
+                <div style="max-width: 600px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                  <h2 style="color: #E1306C; text-align: center;">Reset Your Password</h2>
+                  <p style="font-size: 16px; color: #333;">Hi ${user.username || "there"},</p>
+                  <p style="font-size: 15px; color: #555;">
+                    We received a request to reset your password. Use the OTP below to proceed:
+                  </p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <span style="display: inline-block; background-color: #E1306C; color: white; font-size: 24px; padding: 12px 25px; border-radius: 6px; letter-spacing: 4px; font-weight: bold;">
+                      ${otp}
+                    </span>
+                  </div>
+                  <p style="font-size: 14px; color: #777;">
+                    If you didn't request a password reset, you can safely ignore this email.
+                  </p>
+                  <p style="font-size: 12px; color: #aaa; text-align: center; margin-top: 40px;">
+                    © ${new Date().getFullYear()} Instapic by Harsh. All rights reserved.
+                  </p>
+                </div>
+              </div>
+            `,
+          };
+          
 
         await transporter.sendMail(mailOptions);
 
