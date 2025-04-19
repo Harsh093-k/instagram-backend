@@ -55,3 +55,44 @@ export const getMessage = async (req,res) => {
         console.log(error);
     }
 }
+export const deleteMessage = async (req, res) => {
+    try {
+      const userId = req.id;
+      const messageId = req.params.id;
+  
+      const message = await Message.findById(messageId);
+  
+      if (!message) {
+        return res.status(404).json({ success: false, message: "Message not found" });
+      }
+  
+      if (message.senderId.toString() !== userId) {
+        return res.status(403).json({ success: false, message: "Unauthorized" });
+      }
+  
+     
+      await Message.findByIdAndDelete(messageId);
+  
+     
+      await Conversation.updateOne(
+        { participants: { $all: [message.senderId, message.receiverId] } },
+        { $pull: { messages: messageId } }
+      );
+  
+     
+      const receiverSocketId = getReceiverSocketId(message.receiverId.toString());
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("messageDeleted", { messageId });
+      }
+  
+     
+      res.status(200).json({
+        success: true,
+        message: "Message deleted successfully",
+        messageId
+      });
+    } catch (error) {
+      console.error("Delete message error:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
