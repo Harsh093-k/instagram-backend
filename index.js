@@ -26,7 +26,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 const corsOptions = {
-    origin:'https://instagram-frontend-rp7y.vercel.app',
+    // origin:'https://instagram-frontend-rp7y.vercel.app',
+    origin:' http://localhost:5173',
     credentials: true
 }
 app.use(cors(corsOptions));
