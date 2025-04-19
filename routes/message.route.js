@@ -6,7 +6,7 @@ import { deleteMessage, getMessage, sendMessage } from "../controllers/message.c
 const router = express.Router();
 
 router.post('/send/:id',isAuthenticated, sendMessage);
-router.delete('delete/:id',isAuthenticated, deleteMessage);
+router.delete('/delete/:id',isAuthenticated, deleteMessage);
 router.get('/all/:id',isAuthenticated, getMessage);
 
  
