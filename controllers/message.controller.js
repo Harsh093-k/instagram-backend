@@ -70,15 +70,15 @@ export const deleteMessage = async (req, res) => {
         return res.status(403).json({ success: false, message: "Unauthorized" });
       }
   
-     
-      await Message.findByIdAndDelete(messageId);
-  
-     
       await Conversation.updateOne(
         { participants: { $all: [message.senderId, message.receiverId] } },
         { $pull: { messages: messageId } }
       );
   
+      await Message.findByIdAndDelete(messageId);
+  
+     
+     
      
       const receiverSocketId = getReceiverSocketId(message.receiverId.toString());
       if (receiverSocketId) {
