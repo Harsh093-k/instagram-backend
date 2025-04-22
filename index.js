@@ -26,8 +26,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 const corsOptions = {
-    // origin:'https://instgram-frontend-seven.vercel.app',
-    origin:'http://localhost:5173',
+    origin:'https://instgram-frontend-seven.vercel.app',
+    // origin:'http://localhost:5173',
     credentials: true
 }
 app.use(cors(corsOptions));
